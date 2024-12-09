@@ -1,73 +1,57 @@
 package finalExamMaterial.week15_Dec3_tues;
 
 public class JMLExample {
-    //@ requires x >= 0;
-    //@ ensures \result == x+1;
-    //@ ensures \result >= 1;
-    public static int plusOne(int x) {
+    /*@
+        requires y >= 0;
+        ensures \result == x*y;
+    */
+    public static int mult(int x, int y) {
         //what should we do here?
 
-        //precondition is not met
-        if (x < 0) {
-            throw new IllegalArgumentException("precondition failed");
+        if (y < 0) {
+            throw new IllegalArgumentException("second parameter must be nonnegative");
         }
 
-        int ans = x + 1;
+        int sum = 0;
+        int count = 0;
+
+        while (count < y) {
+            sum = sum + x;
+            count = count + 1;
+        }
 
         //what should we do here?
+        assert sum == x*y;
 
-        assert ans == x+1;
-        assert ans >= 1;
-
-        return ans;
+        return sum;
     }
 
-    //@ requires nums != null;
-    //@ ensures (\forall int k; 0 <= k && k < nums.length; nums[k] == \old(nums[k]) * 2);
-    public static void doubleEach(int[] nums) {
+    /*@
+        requires nums != null;
+        requires nums.length >= 2;
+        ensures (nums[0] == \old(nums[nums.length-1]));
+        ensures (nums[nums.length-1] == \old(nums[0]));
+        ensures (\forall int k; 1 <= k && k < nums.length-1; nums[k] == \old(nums[k]));
+    */
+    public static void changeArray(int[] nums) {
         //what should we do here?
 
-        if (nums == null) {
-            throw new IllegalArgumentException("array should not be null");
+        if (nums == null || nums.length < 2) {
+            throw new IllegalArgumentException("array must be non-null with size at least 2");
         }
 
         int[] oldElem = new int[nums.length];
         System.arraycopy(nums, 0, oldElem, 0, nums.length);
 
-        //how will we know if postcondition is satisfied?
-
-        for (int i = 0; i < nums.length; i++) {
-            nums[i] = nums[i] * 2;
-        }
+        int temp = nums[0];
+        nums[0] = nums[nums.length-1];
+        nums[nums.length-1] = temp;
 
         //what should we do here?
-        for (int i = 0; i < nums.length; i++) {
-            assert nums[i] == 2*oldElem[i];
+        for (int i = 1; i < nums.length-1; i++) {
+            assert nums[i] == oldElem[i];
         }
-    }
-
-    //what should our function contract be?
-
-    /*@
-        requires y >= 0;
-        ensures \result == x*y;
-     */
-    public static int mult(int x, int y) {
-        //what should we do here?
-
-        if (y < 0) {
-            throw new IllegalArgumentException("precondition failed");
-        }
-
-        int product = 0;
-        for (int i = 0; i < y; i++) {
-            product += x;
-        }
-
-        //what should we do here?
-
-        assert product == x * y;
-
-        return product;
+        assert nums[0] == oldElem[nums.length-1];
+        assert nums[nums.length-1] == oldElem[0];
     }
 }
